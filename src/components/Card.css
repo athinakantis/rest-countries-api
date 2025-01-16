@@ -1,0 +1,23 @@
+.country-card {
+  background-color: var(--elements_dark);
+  border-radius: 4px;
+  width: 300px;
+  overflow: hidden;
+}
+
+.country-card span {
+  font-weight: var(--fontWeight_medium);
+}
+
+.country-card img {
+  width: 300px;
+}
+
+.country-card h4 {
+  margin: 0 0 0.7rem;
+  font-size: 1.1rem;
+}
+
+.country-details {
+  padding: 1rem 1rem 2.5rem;
+}
