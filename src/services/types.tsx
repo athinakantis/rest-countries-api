@@ -1,6 +1,9 @@
 export interface Country {
   cca3: string;
-  nativeName: object;
+  id: Country['cca3'];
+  name: {
+    common: string;
+  }
   languages?: object;
   currencies?: object;
   tld?: string[];
@@ -8,9 +11,17 @@ export interface Country {
   population?: number;
   subregion?: string;
   region?: string;
-  flags?: {
+  flags: {
     png: string;
     svg: string;
   }
-  borders?: string[]
+  borders: string[]
 }
+
+
+
+export interface SearchBarProps {
+  setSearchterm: (searchterm: string) => void;
+}
+
+export type Filter = 'Filter by region' | 'Africa' | 'Americas' | 'Asia' | 'Europe' | 'Oceania';
