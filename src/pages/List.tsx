@@ -1,30 +1,64 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Card from '../components/Card';
-import axios from 'axios';
+import { Country, Filter } from '../services/types';
+import SearchBar from '../components/SearchBar';
+import { fetchAllCountries, filterCountries } from '../utils/requests';
 
 function List() {
-  const [countries, setCountries] = useState<object[]>([])
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [searchterm, setSearchterm] = useState<string>('');
+  const [filter, setFilter] = useState<Filter>('Filter by region');
+  const allCountries = useRef<undefined | Country[]>()
+
+  const filters = ['Filter by region', 'Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
 
   useMemo(() => {
-    const fetchAllCountries = async () => {
-      const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,population,capital,region,flags,cca3')
-      console.log(response.data),
-      setCountries(response.data)
+    if (!allCountries.current) {
+      return fetchAllCountries().then((data) => {
+        setCountries(data)
+        allCountries.current = data
+      });
     }
-
-    const fetchOneCountry = async () => {
-      const response = await axios.get('https://restcountries.com/v3.1/name/france?fields=name,population,capital,region,tld,subregion,currencies,languages,borders,cca3,flags')
-      setCountries(response.data)
+    if (searchterm) {
+      return setCountries(filterCountries(searchterm, allCountries.current))
     }
-    
-    fetchOneCountry()
-  }, [])
+    setCountries(allCountries.current)
+  }, [searchterm]);
 
   return (
-    <>
-    {countries.length > 0 && countries.map((country: object) => <Card key={country?.cca3} country={country} />)}
-    </>
-  )
+    <div className='content-container'>
+      <div className='search-filter-container'>
+        <SearchBar setSearchterm={setSearchterm} />
+
+        <div className="filter-container">
+
+          <select
+            className='regionFilter'
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as Filter)}
+          >
+            {filters.slice(1).map((f) => (
+              <option
+                key={f}
+                value={f}
+              >
+                {f}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className='countries-container'>
+        {countries.length > 0 &&
+          countries.map((country: Country) => (
+            <Card
+              key={country.id}
+              country={country}
+            />
+          ))}
+      </div>
+    </div>
+  );
 }
 
 export default List;
