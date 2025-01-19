@@ -1,16 +1,15 @@
 import { useMemo, useRef, useState } from 'react';
 import Card from '../components/Card';
-import { Country, Filter } from '../services/types';
+import { CountrySimplified, Filter } from '../services/types';
 import SearchBar from '../components/SearchBar';
-import { fetchAllCountries, filterCountries } from '../utils/requests';
+import { fetchAllCountries, fetchByRegion, filterCountries } from '../utils/requests';
+import { filters } from '../utils/data';
 
 function List() {
-  const [countries, setCountries] = useState<Country[]>([]);
+  const [countries, setCountries] = useState<CountrySimplified[]>([]);
   const [searchterm, setSearchterm] = useState<string>('');
   const [filter, setFilter] = useState<Filter>('Filter by region');
-  const allCountries = useRef<undefined | Country[]>()
-
-  const filters = ['Filter by region', 'Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
+  const allCountries = useRef<undefined | CountrySimplified[]>()
 
   useMemo(() => {
     if (!allCountries.current) {
@@ -19,11 +18,16 @@ function List() {
         allCountries.current = data
       });
     }
+
+    if (filter !== 'Filter by region') {
+      return fetchByRegion(filter).then(data => setCountries(data))
+    }
+
     if (searchterm) {
       return setCountries(filterCountries(searchterm, allCountries.current))
     }
     setCountries(allCountries.current)
-  }, [searchterm]);
+  }, [searchterm, filter]);
 
   return (
     <div className='content-container'>
@@ -37,7 +41,7 @@ function List() {
             value={filter}
             onChange={(e) => setFilter(e.target.value as Filter)}
           >
-            {filters.slice(1).map((f) => (
+            {filters.map((f) => (
               <option
                 key={f}
                 value={f}
@@ -50,7 +54,7 @@ function List() {
       </div>
       <div className='countries-container'>
         {countries.length > 0 &&
-          countries.map((country: Country) => (
+          countries.map((country: CountrySimplified) => (
             <Card
               key={country.id}
               country={country}
