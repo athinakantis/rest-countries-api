@@ -5,11 +5,11 @@ export const formatLanguages = (languages: object) => {
 }
 
 export const formatCurrencies = (currencies: Currency) => {
-  let formattedCurrencies = '';
+  let formattedCurrencies = []
   for (let i = 0; i < Object.keys(currencies).length; i++) {
-    formattedCurrencies += (Object.values(currencies)[i]['name'])
+    formattedCurrencies.push(Object.values(currencies)[i]['name'])
   }
-  return <p><span>Currencies: </span>{formattedCurrencies}</p>
+  return <p><span>Currencies: </span>{formattedCurrencies.join(', ')}</p>
 }
 
 export const formatTLD = (tld: string[]) => {
