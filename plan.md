@@ -122,9 +122,25 @@ flags: {
 
 ## Components
 
-**List**:
+### **List**:
 
 - Searchbar
 - Card (country)
 
-**SinglePage**
+### **SinglePage**
+
+No custom components
+
+## Custom hooks
+
+### useFetch
+
+#### Parameters
+
+- A function
+
+#### Returns
+
+- Data
+- Loading
+- Error
