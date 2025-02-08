@@ -4,8 +4,8 @@ import { router } from './utils/router';
 import { Theme } from './services/types';
 import { themes } from './utils/data';
 
-interface ThemeContextType {
-  theme: Theme;
+export interface ThemeContextType {
+  theme: Theme | null;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
 }
 
@@ -19,8 +19,8 @@ function App() {
   const root = document.querySelector('html') as HTMLElement;
 
   useEffect(() => {
-    for (const variable in themes[theme]) {
-      root.style.setProperty(variable, themes[theme][variable])
+    for (const variable of Object.keys(themes[theme]) as Array<keyof typeof themes[Theme]>) {
+      root.style.setProperty(variable, themes[theme][variable as keyof typeof themes[Theme]])
     }
     localStorage.setItem('theme', JSON.stringify(theme))
   }, [theme])

@@ -7,7 +7,7 @@
 }
 
 :root {
-  --background: hsl(207, 26%, 17%);
+  --background: rgb(32, 44, 55);
   --elements: hsl(209, 23%, 22%);
   --text: hsl(0, 0%, 100%);
 
@@ -72,8 +72,11 @@ header {
   justify-content: space-between;
   font-size: 14px;
   margin: 0 0 2rem;
+  flex-wrap: wrap;
+  column-gap: 2rem;
 
   & > div {
+    height: 53px;
     filter: var(--dropShadow);
   }
 }
@@ -85,10 +88,6 @@ header {
   width: 300px;
   border-radius: 5px;
   transition: width 250ms ease-in-out;
-
-  &:has(input:focus-visible) {
-    width: 350px;
-  }
 
   & input {
     background-color: transparent;
@@ -151,7 +150,6 @@ header {
 
 /* SINGLE PAGE Styling */
 .single-page-country-container {
-  width: 90%;
   margin: 4rem auto 0;
 }
 
@@ -162,7 +160,7 @@ header {
   & img {
     border: 15px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    max-width: 500px;
+    max-width: 600px;
     width: 400px;
     height: fit-content;
     margin: 0 0 auto;
@@ -175,11 +173,24 @@ header {
   border-radius: 0;
 }
 
+#back {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: 0.5rem;
+  line-height: 1;
+  padding: 7px 20px;
+  margin: 0 0 0 15px;
+
+  & svg {
+    width: 1rem;
+  }
+}
+
 #back,
 .border-countries a {
   background-color: var(--elements);
   border: none;
-  padding: 5px 20px;
   border-radius: var(--buttonRadius);
   color: var(--text);
   filter: var(--dropShadow);
@@ -206,10 +217,11 @@ header {
   }
 }
 
-.single-page-country .country-details {
+.content-container .single-page-country .country-details {
   display: flex;
   gap: 2rem;
   margin: 0 0 3.5rem;
+  padding: 0;
 
   & > div {
     display: flex;
@@ -230,6 +242,10 @@ header {
   & span {
     margin: 0 0.5rem 0 0;
   }
+
+  & a {
+    padding: 5px 20px;
+  }
 }
 
 .border-countries a {
@@ -238,12 +254,76 @@ header {
 
 /* MEDIA QUERIES */
 @media only screen and (max-width: 950px) {
-  .single-page-country {
+  .content-container .single-page-country {
     flex-direction: row-reverse;
     gap: 1rem;
+    justify-content: start;
+
+    & .country-details {
+      flex-direction: column;
+    }
   }
 
   .country-details-container {
     padding: 0;
+  }
+
+  #back {
+    margin: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  header {
+    height: 6rem;
+
+    & h2 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .content-container .single-page-country {
+    flex-direction: column;
+  }
+
+  .content-container .single-page-country img {
+    width: 100%;
+    box-sizing: content-box;
+    margin: 0 auto;
+    position: relative;
+    left: -11px;
+    border: 11px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .search-filter-container {
+    flex-direction: column;
+
+    & .searchbar-container {
+      width: 100%;
+      margin: 0 0 3rem;
+    }
+  }
+
+  .content-container .countries-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .content-container .country-card .country-details {
+    padding: 1.5rem 1.5rem 2.5rem;
+
+    & p:not(:last-of-type) {
+      margin: 0 0 0.4rem;
+    }
+  }
+
+  .content-container .country-card {
+    flex: 100%;
+
+    & img {
+      width: 100%;
+    }
   }
 }

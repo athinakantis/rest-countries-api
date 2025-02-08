@@ -1,27 +1,22 @@
-import { Link, useParams } from 'react-router-dom';
-import { fetchOneCountry, getBorderCountries } from '../utils/requests';
 import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { Country } from '../services/types';
 import { formatCurrencies, formatLanguages, formatTLD } from '../utils/formatData';
+import { fetchOneCountry } from '../utils/requests';
 
 function SinglePage() {
   const { name } = useParams<string>();
   const [country, setCountry] = useState<Country | null>(null);
 
+  const { borderCountries, singleCountry } = useAppSelector((state) => state.countries)
+  const dispatch = useAppDispatch()
+
   useEffect(() => {
     if (!name) return;
 
-    const getCountry = async (name: string) => {
-      const data = await fetchOneCountry(name);
-      setCountry(data);
-
-      if (data.borders.length > 0) {
-        getBorderCountries(data.borders).then((dataB) => {
-          setCountry((prev) => (prev ? { ...prev, borders: dataB } : prev));
-        });
-      }
-    };
-    getCountry(name);
+    dispatch(fetchOneCountry(name))
+    setCountry(singleCountry)
   }, [name]);
 
   return (
@@ -30,6 +25,10 @@ function SinglePage() {
         to='/'
         id='back'
       >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+
         Back
       </Link>
       <div className='single-page-country'>
@@ -56,14 +55,17 @@ function SinglePage() {
                 </div>
 
               </div>
-              {country.borders.length > 0 && (
-                <div className='border-countries'>
-                  <span>Border Countries: </span>
-                  {country.borders.map((borderCountry) => (
-                    <Link to={`/${borderCountry}`}>{borderCountry}</Link>
-                  ))}
-                </div>
-              )}
+              <p>
+                <span>Border Countries: </span>
+                {country.borders.length > 0 ? (
+                  <div className='border-countries'>
+
+                    {country.borders.map((borderCountry) => (
+                      <Link key={borderCountry} to={`/${borderCountry}`}>{borderCountry}</Link>
+                    ))}
+                  </div>
+                ) : 'No Neighbouring Countries'}
+              </p>
             </div>
           </>
         )}

@@ -1,41 +1,52 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '../components/Card';
-import { CountrySimplified, Filter } from '../services/types';
 import SearchBar from '../components/SearchBar';
-import { fetchAllCountries, fetchByRegion, filterCountries } from '../utils/requests';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { Country, Filter } from '../services/types';
+import { filterCountries } from '../store/countrySlice';
+import { RootState } from '../store/store';
 import { filters } from '../utils/data';
+import { fetchAllCountries, fetchRegionalCountries } from '../utils/requests';
 
 function List() {
-  const [countries, setCountries] = useState<CountrySimplified[]>([]);
   const [searchterm, setSearchterm] = useState<string>('');
   const [filter, setFilter] = useState<Filter>('Filter by region');
-  const allCountries = useRef<undefined | CountrySimplified[]>()
+  const [countries, setCountries] = useState<Partial<Country>[] | undefined>(
+    []
+  );
+  const { allCountries, regionalCountries, filteredCountries } = useAppSelector(
+    (state: RootState) => state.countries
+  );
+  const dispatch = useAppDispatch();
 
-  useMemo(() => {
-    if (!allCountries.current) {
-      return fetchAllCountries().then((data) => {
-        setCountries(data)
-        allCountries.current = data
-      });
-    }
-
+  useEffect(() => {
     if (filter !== 'Filter by region') {
-      return fetchByRegion(filter).then(data => setCountries(data))
+      dispatch(fetchRegionalCountries(filter));
     }
 
     if (searchterm) {
-      return setCountries(filterCountries(searchterm, allCountries.current))
+      dispatch(filterCountries({ searchterm, filter }))
+    } else {
+      dispatch(fetchAllCountries());
     }
-    setCountries(allCountries.current)
-  }, [searchterm, filter]);
+  }, [dispatch, filter, searchterm]);
+
+  useEffect(() => {
+    if (searchterm) {
+      setCountries(filteredCountries)
+    } else if (!searchterm && filter !== 'Filter by region') {
+      setCountries(regionalCountries)
+    } else {
+      setCountries(allCountries)
+    }
+  }, [allCountries, regionalCountries, filteredCountries, filter, searchterm]);
 
   return (
-    <div className='content-container'>
+    <>
       <div className='search-filter-container'>
         <SearchBar setSearchterm={setSearchterm} />
 
-        <div className="filter-container">
-
+        <div className='filter-container'>
           <select
             className='regionFilter'
             value={filter}
@@ -53,15 +64,14 @@ function List() {
         </div>
       </div>
       <div className='countries-container'>
-        {countries.length > 0 &&
-          countries.map((country: CountrySimplified) => (
-            <Card
-              key={country.id}
-              country={country}
-            />
-          ))}
+        {countries?.map((country) => (
+          <Card
+            key={country.id}
+            country={country}
+          />
+        ))}
       </div>
-    </div>
+    </>
   );
 }
 
