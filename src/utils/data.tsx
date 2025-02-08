@@ -4,7 +4,7 @@ export const themes = {
   "light": {
     "--background": 'hsl(0, 0%, 98%)',
     '--elements': 'hsl(0, 0%, 100%)',
-    '--text': 'hsl(207, 26%, 17%)'
+    '--text': 'hsl(209, 26.40%, 17.10%)'
   },
   "dark": {
     '--background': 'hsl(207, 26%, 17%)',
